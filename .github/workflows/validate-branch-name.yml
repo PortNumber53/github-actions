@@ -12,9 +12,12 @@ jobs:
 
       - name: Validate Branch Name
         run: |
+          set -e
+          set -x
           regex="^(TCO)-[0-9]+$"
           if [[ ! "$GITHUB_HEAD_REF" =~ $regex ]]; then
             body="{\"body\": \"Hi @$GITHUB_ACTOR, your branch name '$GITHUB_HEAD_REF' does not match the expected pattern '$regex'. Please rename your branch and open a new Pull Request. Thank you!\"}"
+            echo "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${GITHUB_ISSUE_NUMBER}/comments"
             curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -d "$body" "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${GITHUB_ISSUE_NUMBER}/comments"
             exit 1
           fi
