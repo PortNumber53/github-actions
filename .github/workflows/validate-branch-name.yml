@@ -13,7 +13,6 @@ jobs:
       - name: Validate Branch Name
         env:
           PULL_NUMBER: ${{ github.event.number }}
-          GITHUB_TOKEN: ${{ github.secrets.GITHUB_TOKEN }}
         run: |
           set -e
           set -x
