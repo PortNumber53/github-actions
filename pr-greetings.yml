@@ -1,0 +1,29 @@
+name: PR Greetings
+
+on:
+  pull_request:
+    types: [opened, reopened, edited, synchronize]
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm install @actions/core @actions/github
+      - name: Create comment
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const pull_number = context.payload.pull_request.number;
+            const body = 'Hello, @PortNumber53! Thank you for opening this pull request.';
+            github.pulls.createReview({
+              owner,
+              repo,
+              pull_number,
+              body
+            });

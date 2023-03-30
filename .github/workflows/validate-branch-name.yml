@@ -1,0 +1,44 @@
+name: Validate Branch Name
+on:
+  pull_request:
+    types: [opened, reopened, edited, synchronize]
+
+jobs:
+  validate-branch-name:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses:  actions/checkout@v3
+
+      - name: Validate Branch Name
+        env:
+          PULL_NUMBER: ${{ github.event.number }}
+          GITHUB_TOKEN: ${{ secrets.GH_ACTION_TOKEN }}
+        run: |
+          set -x
+          set -e
+          regex="^(TCO|PROJ)-[0-9]+(-[\S]+)?$"
+          echo "$GITHUB_HEAD_REF"
+          if [[ "$GITHUB_HEAD_REF" =~ $regex ]]; then
+            echo "COMMENT_BODY=Hi @$GITHUB_ACTOR, your branch name '$GITHUB_HEAD_REF' does not match the expected pattern '$regex'. Please rename your branch and open a new Pull Request. Thank you!" >> $GITHUB_ENV
+            # echo "MESSAGE: ${COMMENT_BODY}"?
+            # echo "Authorization: token ${GITHUB_TOKEN}"
+            # echo "Posting to https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${PULL_NUMBER}/comments"
+            # curl -H "Authorization: token ${GITHUB_TOKEN}" -d "$COMMENT_BODY" "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${PULL_NUMBER}/comments"
+            # exit 1
+            echo "BAD"
+          else
+            echo "GOOD"
+            echo "COMMENT_BODY=GOOD" >> $GITHUB_ENV
+          fi
+          #echo ${COMMENT_BODY}
+
+      - name: Comment PR
+        if: (env.COMMENT_BODY != 'GOOD')
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            message 5 ${{ env.COMMENT_BODY }} :wave:
+          pr_number: ${{ github.event.number }}
