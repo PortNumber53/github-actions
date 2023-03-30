@@ -19,17 +19,19 @@ jobs:
       id: branch_check
 
     - name: Comment on pull request
-      if: steps.branch_check.outputs.needs_comment == 'true'
       uses: actions/github-script@v3
+      if: steps.branch_check.outputs.needs_comment == 'true'
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          const body = {
-            body: steps.branch_check.outputs.comment_body
-          };
-          await github.pulls.createReviewComment({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            pull_number: context.payload.pull_request.number,
-            body: body.body
-          });
+          if (steps.branch_check.outputs.needs_comment == 'true') {
+            const body = {
+              body: steps.branch_check.outputs.comment_body
+            };
+            await github.pulls.createReviewComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              body: body.body
+            });
+          }
