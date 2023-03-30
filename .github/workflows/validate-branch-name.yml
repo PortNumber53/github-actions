@@ -1,37 +1,28 @@
-name: Validate branch name
-
+name: Validate Branch Name
 on:
   pull_request:
-    types: [opened, synchronize]
+    types: [opened, reopened, edited, synchronize]
 
 jobs:
-  validate_branch_name:
+  validate-branch-name:
     runs-on: ubuntu-latest
     steps:
-    - name: Check branch name
-      run: |
-        branch_name=$(echo ${{ github.head_ref }} | awk -F/ '{print $NF}')
-        regex="^(TCO|PROJ)-[0-9]+$"
-        if ! [[ "$branch_name" =~ $regex ]]; then
-          echo "::set-output name=needs_comment::true"
-          echo "::set-output name=comment_body::Branch name must match pattern 'TCO-123456' or 'PROJ-98323'."
-        fi
-      id: branch_check
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Comment on pull request
-      uses: actions/github-script@v3
-      if: steps.branch_check.outputs.needs_comment == 'true'
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          if (steps.branch_check.outputs.needs_comment == 'true') {
-            const body = {
-              body: steps.branch_check.outputs.comment_body
-            };
-            await github.pulls.createReviewComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number,
-              body: body.body
-            });
-          }
+      - name: Validate Branch Name
+        env:
+          PULL_NUMBER: ${{ github.event.number }}
+          GITHUB_TOKEN: ${{ github.secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          set -x
+          set
+          regex="^(TCO)-[0-9]+$"
+          if [[ ! "$GITHUB_HEAD_REF" =~ $regex ]]; then
+            body="{\"body\": \"Hi @$GITHUB_ACTOR, your branch name '$GITHUB_HEAD_REF' does not match the expected pattern '$regex'. Please rename your branch and open a new Pull Request. Thank you!\"}"
+            echo "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${PULL_NUMBER}/comments"
+            echo "Authorization: Bearer ${{ GITHUB_TOKEN }}"
+            curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -d "$body" "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${PULL_NUMBER}/comments"
+            exit 1
+          fi
