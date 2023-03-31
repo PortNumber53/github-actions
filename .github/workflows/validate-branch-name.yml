@@ -20,6 +20,7 @@ jobs:
           set -x
           set -e
           regex="^(TCO|PROJ)-[0-9]+(-[\S]+)?$"
+          echo "$GITHUB_HEAD_REF"
           if ! [[ "$GITHUB_HEAD_REF" =~ $regex ]]; then
             echo "COMMENT_BODY=Hi @$GITHUB_ACTOR, your branch name '$GITHUB_HEAD_REF' does not match the expected pattern '$regex'. Please rename your branch and open a new Pull Request. Thank you!" >> $GITHUB_ENV
             # echo "MESSAGE: ${COMMENT_BODY}"?
