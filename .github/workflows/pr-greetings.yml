@@ -2,7 +2,7 @@ name: PR Greetings
 
 on:
   pull_request:
-    types: [opened]
+    types: [opened, opened, reopened, edited, synchronize]
 
 jobs:
   greet_user:
@@ -11,7 +11,7 @@ jobs:
       - name: Greet user
         uses: actions/github-script@v5
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GH_ACTION_TOKEN }}
           script: |
             const prCreator = context.payload.pull_request.user.login;
             const message = `Hello, @${prCreator}! Thank you for opening this PR.`;
