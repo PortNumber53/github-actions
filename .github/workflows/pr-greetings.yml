@@ -5,19 +5,24 @@ on:
     types: [opened, reopened, edited, synchronize]
 
 jobs:
-  pr-greetings:
+  comment:
     runs-on: ubuntu-latest
     steps:
-      - name: Greet PR opener
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm install @actions/core @actions/github
+      - name: Create comment
         uses: actions/github-script@v5
         with:
-          github-token: ${{ secrets.GH_ACTION_TOKEN }}
           script: |
-            const greeting = `Hello, @${{ github.event.pull_request.user.login }}! Thank you for opening this pull request.`;
-            const { data: comment } = await octokit.rest.pulls.createReviewComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number,
-              body: greeting
+            const { owner, repo } = context.repo;
+            const pull_number = context.payload.pull_request.number;
+            const body = 'Hello, @PortNumber53! Thank you for opening this pull request.';
+            const octokit = new github.GitHub(process.env.GITHUB_TOKEN);
+            octokit.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: pull_number,
+              body
             });
-            console.log(`Comment created: ${comment.html_url}`);
