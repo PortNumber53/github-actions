@@ -6,6 +6,8 @@ on:
 jobs:
   validate-branch-name:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
