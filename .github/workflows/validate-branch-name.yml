@@ -18,11 +18,9 @@ jobs:
           set -e
           set -x
           set
-
           regex="^(TCO|PROJ)-[0-9]+$"
           if [[ ! "$GITHUB_HEAD_REF" =~ $regex ]]; then
             body="{\"body\": \"Hi @$GITHUB_ACTOR, your branch name '$GITHUB_HEAD_REF' does not match the expected pattern '$regex'. Please rename your branch and open a new Pull Request. Thank you!\"}"
-
             echo "Authorization: token ${{ GITHUB_TOKEN }}"
             echo "Posting to https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${PULL_NUMBER}/comments"
             curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -d "$body" "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${PULL_NUMBER}/comments"
