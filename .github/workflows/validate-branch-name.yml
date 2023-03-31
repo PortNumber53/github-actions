@@ -40,5 +40,5 @@ jobs:
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
-            message 5 ${{ env.COMMENT_BODY }} :wave:
+            :x::x::x: ${{ env.COMMENT_BODY }} :x::x::x:
           pr_number: ${{ github.event.number }}
