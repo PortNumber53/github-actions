@@ -1,24 +1,33 @@
-name: PR Greetings
-
 on:
   pull_request:
-    types: [opened, opened, reopened, edited, synchronize]
+    types: [opened, reopened, edited, synchronize]
 
 jobs:
   greet_user:
     runs-on: ubuntu-latest
     steps:
-      - name: Greet user
+      - name: Get PR author
+        id: author
         uses: actions/github-script@v5
         with:
-          github-token: ${{ secrets.GH_ACTION_TOKEN }}
           script: |
-            const prCreator = context.payload.pull_request.user.login;
-            const message = `Hello, @${prCreator}! Thank you for opening this PR.`;
-            const { data } = await github.issues.createComment({
+            const author = context.payload.pull_request.user.login;
+            console.log(`PR author: ${author}`);
+            return author
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_ACTION_TOKEN }}
+      - name: Greet PR author
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const message = `Hello, @${{ steps.author.outputs.result }}! Thank you for opening this pull request.`;
+            console.log(message);
+            const comment = await github.pulls.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.payload.pull_request.number,
+              pull_number: context.payload.pull_request.number,
               body: message
             });
-            console.log(data.html_url);
+            console.log(`Comment created: ${comment.html_url}`);
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_ACTION_TOKEN }}
