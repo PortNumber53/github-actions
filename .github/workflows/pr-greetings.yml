@@ -22,6 +22,8 @@ jobs:
           script: |
             const message = `Hello, @${{ steps.author.outputs.result }}! Thank you for opening this pull request.`;
             console.log(message);
+            console.log(github);
+            console.log(github.pulls);
             const comment = await github.pulls.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
