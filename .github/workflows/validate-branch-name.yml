@@ -29,6 +29,7 @@ jobs:
             # curl -H "Authorization: token ${GITHUB_TOKEN}" -d "$COMMENT_BODY" "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${PULL_NUMBER}/comments"
             # exit 1
           fi
+          echo ${COMMENT_BODY}
 
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@v2
