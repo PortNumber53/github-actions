@@ -22,7 +22,7 @@ jobs:
           regex="^(TCO|PROJ)-[0-9]+(-[a-zA-Z0-9]+)*$"
           echo "$GITHUB_HEAD_REF"
           if ! [[ "${GITHUB_HEAD_REF}" =~ $regex ]]; then
-            echo "COMMENT_BODY=Hi @$GITHUB_ACTOR, your branch name `'$GITHUB_HEAD_REF'` does not match the expected pattern `'$regex'`. Please rename your branch and open a new Pull Request. Thank you!" >> $GITHUB_ENV
+            echo "COMMENT_BODY=Hi @$GITHUB_ACTOR, your branch name \`'$GITHUB_HEAD_REF'\` does not match the expected pattern \`'$regex'\`. Please rename your branch and open a new Pull Request. Thank you!" >> $GITHUB_ENV
             # echo "MESSAGE: ${COMMENT_BODY}"?
             # echo "Authorization: token ${GITHUB_TOKEN}"
             # echo "Posting to https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${PULL_NUMBER}/comments"
