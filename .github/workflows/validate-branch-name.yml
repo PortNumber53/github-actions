@@ -17,20 +17,17 @@ jobs:
           PULL_NUMBER: ${{ github.event.number }}
           GITHUB_TOKEN: ${{ secrets.GH_ACTION_TOKEN }}
         run: |
-          set -e
-          set -x
-          set
           regex="^(TCO|PROJ)-[0-9]+$"
           export COMMENT_BODY="Hello message"
           if [[ ! "$GITHUB_HEAD_REF" =~ $regex ]]; then
-            export COMMENT_BODY="Hi @$GITHUB_ACTOR, your branch name '$GITHUB_HEAD_REF' does not match the expected pattern '$regex'. Please rename your branch and open a new Pull Request. Thank you!"
-            echo "MESSAGE: ${COMMENT_BODY}"
+            echo "COMMENT_BODY=Hi @$GITHUB_ACTOR, your branch name '$GITHUB_HEAD_REF' does not match the expected pattern '$regex'. Please rename your branch and open a new Pull Request. Thank you!" >> $GITHUB_ENV
+            # echo "MESSAGE: ${COMMENT_BODY}"?
             # echo "Authorization: token ${GITHUB_TOKEN}"
             # echo "Posting to https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${PULL_NUMBER}/comments"
             # curl -H "Authorization: token ${GITHUB_TOKEN}" -d "$COMMENT_BODY" "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${PULL_NUMBER}/comments"
             # exit 1
           fi
-          echo ${COMMENT_BODY}
+          #echo ${COMMENT_BODY}
 
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@v2
