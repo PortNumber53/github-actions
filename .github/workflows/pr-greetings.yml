@@ -1,35 +1,23 @@
+name: PR Greetings
+
 on:
   pull_request:
-    types: [opened, reopened, edited, synchronize]
+    types: [opened]
 
 jobs:
-  greet_user:
+  pr-greetings:
     runs-on: ubuntu-latest
     steps:
-      - name: Get PR author
-        id: author
+      - name: Greet PR opener
         uses: actions/github-script@v5
         with:
+          github-token: ${{ secrets.GH_ACTION_TOKEN }}
           script: |
-            const author = context.payload.pull_request.user.login;
-            console.log(`PR author: ${author}`);
-            return author
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_ACTION_TOKEN }}
-      - name: Greet PR author
-        uses: actions/github-script@v5
-        with:
-          script: |
-            const message = `Hello, @${{ steps.author.outputs.result }}! Thank you for opening this pull request.`;
-            console.log(message);
-            console.log(github);
-            console.log(github.pulls);
-            const comment = await github.pulls.createComment({
+            const greeting = `Hello, @${{ github.event.pull_request.user.login }}! Thank you for opening this pull request.`;
+            const { data: comment } = await octokit.rest.pulls.createReviewComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.payload.pull_request.number,
-              body: message
+              body: greeting
             });
             console.log(`Comment created: ${comment.html_url}`);
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_ACTION_TOKEN }}
