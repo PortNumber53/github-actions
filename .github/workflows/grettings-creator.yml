@@ -1,0 +1,24 @@
+name: PR Greetings
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  greet_user:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Greet user
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prCreator = context.payload.pull_request.user.login;
+            const message = `Hello, @${prCreator}! Thank you for opening this PR.`;
+            const { data } = await github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: message
+            });
+            console.log(data.html_url);
