@@ -1,2 +1,2 @@
 # github-actions
-Trying different github a ctions
+Trying different github actions
