@@ -1,0 +1,37 @@
+name: Validate Branch Name
+on:
+  pull_request:
+    types: [opened, reopened, edited, synchronize]
+
+jobs:
+  validate-branch-name:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses:  actions/checkout@v3
+
+      - name: Validate Branch Name
+        env:
+          PULL_NUMBER: ${{ github.event.number }}
+          GITHUB_TOKEN: ${{ secrets.GH_ACTION_TOKEN }}
+        run: |
+          regex="^(TCO|PROJ)-[0-9]+(-[a-zA-Z0-9]+)*$"
+          if ! [[ "${GITHUB_HEAD_REF}" =~ $regex ]]; then
+            echo "COMMENT_BODY=Hi @$GITHUB_ACTOR, your branch name \`${GITHUB_HEAD_REF}\` does not match the expected pattern \`${regex}\`. Please rename your branch and open a new Pull Request. Thank you!" >> $GITHUB_ENV
+          else
+            echo "COMMENT_BODY=GOOD" >> $GITHUB_ENV
+          fi
+
+      - name: Comment PR
+        if: (env.COMMENT_BODY != 'GOOD')
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            :x::x::x:
+
+            ${{ env.COMMENT_BODY }}
+
+            :x::x::x:
+          pr_number: ${{ github.event.number }}
