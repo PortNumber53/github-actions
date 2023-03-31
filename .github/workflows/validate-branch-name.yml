@@ -1,5 +1,9 @@
 # Use this github action to validate if the branch name matches a regex
 # use case: it will help your CD/CI not break because humans sometimes forget the rules
+# how to use:
+# Hopefully it's clear to everyone that you'll want to change the regex the branch name is matched against
+# but if it's not clear from the code itself, that's what you need to to:
+# change the regex to match the string format you want.
 ---
 name: Validate Branch Name
 on:
