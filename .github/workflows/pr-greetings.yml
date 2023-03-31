@@ -19,10 +19,9 @@ jobs:
             const { owner, repo } = context.repo;
             const pull_number = context.payload.pull_request.number;
             const body = 'Hello, @PortNumber53! Thank you for opening this pull request.';
-            const octokit = new github.GitHub(process.env.GITHUB_TOKEN);
-            octokit.rest.issues.createComment({
+            github.pulls.createReview({
               owner,
               repo,
-              issue_number: pull_number,
+              pull_number,
               body
             });
