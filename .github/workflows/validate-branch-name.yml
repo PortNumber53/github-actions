@@ -1,3 +1,6 @@
+# Use this github action to validate if the branch name matches a regex
+# use case: it will help your CD/CI not break because humans sometimes forget the rules
+---
 name: Validate Branch Name
 on:
   pull_request:
