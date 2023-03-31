@@ -10,7 +10,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2.7.0
+        uses:  actions/checkout@v3
 
       - name: Validate Branch Name
         env:
